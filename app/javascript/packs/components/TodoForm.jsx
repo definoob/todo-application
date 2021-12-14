@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-
 import axios from "axios";
+
+import setAxiosHeaders from "./AxiosHeader";
 
 class TodoForm extends React.Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class TodoForm extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.titleRef.current.value);
+    setAxiosHeaders();
     axios
       .post("/api/v1/todo_items", {
         todo_item: {
@@ -21,16 +22,10 @@ class TodoForm extends React.Component {
         },
       })
       .then((response) => {
-        console.log({
-          title: this.titleRef.current.value,
-          complete: false,
-        });
         const todoItem = response.data;
         this.props.createTodoItem(todoItem);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(console.log);
     e.target.reset();
   }
 
