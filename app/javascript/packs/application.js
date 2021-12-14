@@ -12,5 +12,6 @@ Rails.start();
 Turbolinks.start();
 ActiveStorage.start();
 
+require("./components");
 require("bootstrap");
 import "bootstrap/dist/css/bootstrap";
