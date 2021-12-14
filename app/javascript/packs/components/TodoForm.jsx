@@ -1,62 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-
 import setAxiosHeaders from "./AxiosHeader";
 
-class TodoForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.titleRef = React.createRef();
-  }
+const TodoForm = ({ createTodoItem }) => {
+  const [title, setTitle] = useState("");
 
-  handleSubmit(e) {
-    e.preventDefault();
+  const create = () => {
     setAxiosHeaders();
     axios
       .post("/api/v1/todo_items", {
         todo_item: {
-          title: this.titleRef.current.value,
+          title: title,
           complete: false,
         },
       })
-      .then((response) => {
-        const todoItem = response.data;
-        this.props.createTodoItem(todoItem);
-      })
+      .then((response) => createTodoItem(response.data))
       .catch(console.log);
-    e.target.reset();
-  }
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit} className="my-3">
-        <div className="form-group row">
-          <div className="form-group col-md-8">
-            <input
-              type="text"
-              name="title"
-              ref={this.titleRef}
-              required
-              className="form-control"
-              id="title"
-              placeholder="Write your todo item here..."
-            />
-          </div>
-          <div className="form-group col-md-4">
-            <button className="btn btn-outline-success btn-block">
-              Add To Do Item
-            </button>
-          </div>
+    setTitle("");
+  };
+
+  return (
+    <div className="my-3">
+      <div className="form-group row">
+        <div className="form-group col-md-8">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="form-control"
+            placeholder="Write your todo item here..."
+            required
+          />
         </div>
-      </form>
-    );
-  }
-}
-
-export default TodoForm;
+        <div className="form-group col-md-4">
+          <button
+            className="btn btn-outline-success btn-block"
+            onClick={create}
+          >
+            Add To Do Item
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 TodoForm.propTypes = {
   createTodoItem: PropTypes.func.isRequired,
 };
+
+export default TodoForm;

@@ -20,9 +20,11 @@ const App = () => {
     getTodoItems();
   }, []);
 
+  const addNewItem = (newItem) => setTodoItems([newItem, ...todoItems]);
+
   return (
     <>
-      <TodoForm createTodoItem={() => {}} />
+      <TodoForm createTodoItem={addNewItem} />
       <TodoItems>
         {todoItems.length > 0 &&
           todoItems.map((todoItem) => (
