@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 
+import TodoForm from "./TodoForm";
 import TodoItems from "./TodoItems";
 import TodoItem from "./TodoItem";
 
@@ -20,12 +21,15 @@ const App = () => {
   }, []);
 
   return (
-    <TodoItems>
-      {todoItems.length > 0 &&
-        todoItems.map((todoItem) => (
-          <TodoItem key={todoItem.id} todoItem={todoItem} />
-        ))}
-    </TodoItems>
+    <>
+      <TodoForm createTodoItem={() => {}} />
+      <TodoItems>
+        {todoItems.length > 0 &&
+          todoItems.map((todoItem) => (
+            <TodoItem key={todoItem.id} todoItem={todoItem} />
+          ))}
+      </TodoItems>
+    </>
   );
 };
 
