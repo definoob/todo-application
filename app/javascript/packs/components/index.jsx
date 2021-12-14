@@ -21,6 +21,8 @@ const App = () => {
   }, []);
 
   const addNewItem = (newItem) => setTodoItems([newItem, ...todoItems]);
+  const removeItem = (id) =>
+    setTodoItems([...todoItems].filter((ele) => ele.id != id));
 
   return (
     <>
@@ -28,7 +30,11 @@ const App = () => {
       <TodoItems>
         {todoItems.length > 0 &&
           todoItems.map((todoItem) => (
-            <TodoItem key={todoItem.id} todoItem={todoItem} />
+            <TodoItem
+              key={todoItem.id}
+              todoItem={todoItem}
+              getTodoItems={removeItem}
+            />
           ))}
       </TodoItems>
     </>
