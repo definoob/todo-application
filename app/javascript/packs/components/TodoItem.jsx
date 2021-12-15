@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import _ from "lodash";
 import setAxiosHeaders from "./AxiosHeader";
 import CheckMark from "./CheckMark";
 
 const TodoItem = ({ todoItem, getTodoItems }) => {
+  const [title, setTitle] = useState(todoItem.title);
   const [complete, setComplete] = useState(todoItem.complete);
+
+  useEffect(() => {
+    onUpdate();
+  }, [title, complete]);
+
+  const onTextChange = (e) => setTitle(e.target.value);
+  const onCheckClick = () => setComplete((prev) => !prev);
 
   const onDestroy = () => {
     setAxiosHeaders();
@@ -19,6 +28,18 @@ const TodoItem = ({ todoItem, getTodoItems }) => {
       .catch(console.log);
   };
 
+  const onUpdate = _.debounce(() => {
+    setAxiosHeaders();
+    axios
+      .put(`/api/v1/todo_items/${todoItem.id}`, {
+        todo_item: {
+          title: title,
+          complete: complete,
+        },
+      })
+      .catch(console.log);
+  }, 1000);
+
   return (
     <tr className={complete ? "table-light" : ""}>
       <td>
@@ -27,27 +48,21 @@ const TodoItem = ({ todoItem, getTodoItems }) => {
       <td>
         <input
           type="text"
-          defaultValue={todoItem.title}
+          value={title}
+          onChange={onTextChange}
           disabled={complete}
           className="form-control"
-          id={`todoItem__title-${todoItem.id}`}
         />
       </td>
       <td className="text-right">
-        <div className="form-check form-check-inline">
+        <div className="form-check form-check-inline" onClick={onCheckClick}>
           <input
-            type="boolean"
-            defaultChecked={complete}
             type="checkbox"
+            checked={complete}
             className="form-check-input"
-            id={`complete-${todoItem.id}`}
+            readOnly
           />
-          <label
-            className="form-check-label"
-            htmlFor={`complete-${todoItem.id}`}
-          >
-            Complete?
-          </label>
+          <label className="form-check-label">Complete?</label>
         </div>
         <button className="btn btn-outline-danger" onClick={onDestroy}>
           Delete
