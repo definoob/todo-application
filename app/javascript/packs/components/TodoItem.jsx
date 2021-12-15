@@ -5,7 +5,7 @@ import _ from "lodash";
 import setAxiosHeaders from "./AxiosHeader";
 import CheckMark from "./CheckMark";
 
-const TodoItem = ({ todoItem, getTodoItems }) => {
+const TodoItem = ({ todoItem, getTodoItems, hideCompletedTodoItems }) => {
   const [title, setTitle] = useState(todoItem.title);
   const [complete, setComplete] = useState(todoItem.complete);
 
@@ -50,7 +50,11 @@ const TodoItem = ({ todoItem, getTodoItems }) => {
   };
 
   return (
-    <tr className={complete ? "table-light" : ""}>
+    <tr
+      className={`${complete && hideCompletedTodoItems ? "d-none" : ""} ${
+        complete ? "table-light" : ""
+      }`}
+    >
       <td>
         <CheckMark complete={complete} />
       </td>
@@ -86,4 +90,5 @@ export default TodoItem;
 TodoItem.propTypes = {
   todoItem: PropTypes.object.isRequired,
   getTodoItems: PropTypes.func.isRequired,
+  hideCompletedTodoItems: PropTypes.bool.isRequired,
 };

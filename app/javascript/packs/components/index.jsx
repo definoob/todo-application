@@ -8,6 +8,7 @@ import TodoItem from "./TodoItem";
 
 const App = () => {
   const [todoItems, setTodoItems] = useState([]);
+  const [hideCompletedTodoItems, setHideCompletedTodoItems] = useState(false);
 
   useEffect(() => {
     const getTodoItems = () => {
@@ -23,17 +24,23 @@ const App = () => {
   const addNewItem = (newItem) => setTodoItems([newItem, ...todoItems]);
   const removeItem = (id) =>
     setTodoItems([...todoItems].filter((ele) => ele.id != id));
+  const toggleCompletedTodoItems = () =>
+    setHideCompletedTodoItems((prev) => !prev);
 
   return (
     <>
       <TodoForm createTodoItem={addNewItem} />
-      <TodoItems>
+      <TodoItems
+        toggleCompletedTodoItems={toggleCompletedTodoItems}
+        hideCompletedTodoItems={hideCompletedTodoItems}
+      >
         {todoItems.length > 0 &&
           todoItems.map((todoItem) => (
             <TodoItem
               key={todoItem.id}
               todoItem={todoItem}
               getTodoItems={removeItem}
+              hideCompletedTodoItems={hideCompletedTodoItems}
             />
           ))}
       </TodoItems>
