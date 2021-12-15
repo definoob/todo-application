@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import _ from "lodash";
@@ -10,11 +10,32 @@ const TodoItem = ({ todoItem, getTodoItems }) => {
   const [complete, setComplete] = useState(todoItem.complete);
 
   useEffect(() => {
-    onUpdate();
-  }, [title, complete]);
+    onUpdate(title, complete);
+  }, [complete]);
 
-  const onTextChange = (e) => setTitle(e.target.value);
+  const onTextChange = (e) => {
+    setTitle(e.target.value);
+    debounceLoadData(e.target.value);
+  };
+
   const onCheckClick = () => setComplete((prev) => !prev);
+
+  const debounceLoadData = useCallback(
+    _.debounce((newTitle) => onUpdate(newTitle, complete), 1000),
+    []
+  );
+
+  const onUpdate = (newTitle, newBool) => {
+    setAxiosHeaders();
+    axios
+      .put(`/api/v1/todo_items/${todoItem.id}`, {
+        todo_item: {
+          title: newTitle,
+          complete: newBool,
+        },
+      })
+      .catch(console.log);
+  };
 
   const onDestroy = () => {
     setAxiosHeaders();
@@ -27,18 +48,6 @@ const TodoItem = ({ todoItem, getTodoItems }) => {
       .then(() => getTodoItems(id))
       .catch(console.log);
   };
-
-  const onUpdate = _.debounce(() => {
-    setAxiosHeaders();
-    axios
-      .put(`/api/v1/todo_items/${todoItem.id}`, {
-        todo_item: {
-          title: title,
-          complete: complete,
-        },
-      })
-      .catch(console.log);
-  }, 1000);
 
   return (
     <tr className={complete ? "table-light" : ""}>
