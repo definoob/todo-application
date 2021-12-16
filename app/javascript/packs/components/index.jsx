@@ -5,17 +5,21 @@ import axios from "axios";
 import TodoForm from "./TodoForm";
 import TodoItems from "./TodoItems";
 import TodoItem from "./TodoItem";
+import Spinner from "./Spinner";
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [todoItems, setTodoItems] = useState([]);
   const [hideCompletedTodoItems, setHideCompletedTodoItems] = useState(false);
 
   useEffect(() => {
     const getTodoItems = () => {
+      setIsLoading(true);
       axios
         .get("/api/v1/todo_items")
         .then((response) => setTodoItems(response.data))
-        .catch(console.log);
+        .catch(console.log)
+        .finally(() => setIsLoading(false));
     };
 
     getTodoItems();
@@ -27,6 +31,9 @@ const App = () => {
   const toggleCompletedTodoItems = () =>
     setHideCompletedTodoItems((prev) => !prev);
 
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <>
       <TodoForm createTodoItem={addNewItem} />
